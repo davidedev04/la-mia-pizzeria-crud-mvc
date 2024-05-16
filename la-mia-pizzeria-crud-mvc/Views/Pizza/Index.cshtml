@@ -1,9 +1,20 @@
-﻿@{
-    Layout = null;
-    ViewData["Title"] = "Pizze";
-}
+﻿@using la_mia_pizzeria_crud_mvc.Data
+@model List<Pizza>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@foreach (var pizza in Model)
+{
+    <div class="d-flex justify-content-center align-items-center">
+
+
+
+        <div class="card align-items-center my-3" style="width: 18rem;">
+            <img src="@pizza.Image" class="card-img-top" alt="@pizza.Name">
+            <div class="card-body">
+                <h5 class="card-title">@pizza.Name</h5>
+                <p class="card-text">@pizza.Description</p>
+                <a href="@Url.Action("GetPizza", "Pizza", new { id = pizza.Id } )" class="btn btn-primary">DETTAGLI</a>
+            </div>
+        </div>
+    </div>
+    
+}

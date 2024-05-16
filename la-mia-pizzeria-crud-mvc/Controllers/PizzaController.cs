@@ -1,5 +1,6 @@
-﻿using la_mia_pizzeria_crud_mvc.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using la_mia_pizzeria_crud_mvc.Data;
+using la_mia_pizzeria_crud_mvc.Models;
 using System.Diagnostics;
 
 namespace la_mia_pizzeria_crud_mvc.Controllers
@@ -15,12 +16,16 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View(PizzaManager.GetAllPizzas());
         }
 
-        public IActionResult Privacy()
+        public IActionResult GetPizza(int id)
         {
-            return View();
+            var pizza = PizzaManager.GetPizza(id);
+            if (pizza != null)
+                return View(pizza);
+            else
+                return View("errore");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

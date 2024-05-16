@@ -1,3 +1,5 @@
+using la_mia_pizzeria_crud_mvc.Data;
+
 namespace la_mia_pizzeria_crud_mvc
 {
     public class Program
@@ -14,7 +16,7 @@ namespace la_mia_pizzeria_crud_mvc
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Pizza/Error");
+                app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -29,6 +31,8 @@ namespace la_mia_pizzeria_crud_mvc
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Pizza}/{action=Index}/{id?}");
+
+            PizzaManager.Seed();
 
             app.Run();
         }
