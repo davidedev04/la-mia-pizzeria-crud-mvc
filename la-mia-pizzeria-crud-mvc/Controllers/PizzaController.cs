@@ -85,6 +85,28 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            using (PizzaContext context = new PizzaContext())
+            {
+                Pizza pizzaToDelete = context.Pizze.Where(pizza => pizza.Id == id).FirstOrDefault();
+
+                if (pizzaToDelete != null)
+                {
+                    context.Pizze.Remove(pizzaToDelete);
+
+                    context.SaveChanges();
+
+                    return RedirectToAction("Index");
+                } else
+                {
+                    return NotFound();
+                }
+            }
+        }
+
+        [HttpPost]
         public IActionResult Create(Pizza pizzaC)
         {
             if (!ModelState.IsValid)

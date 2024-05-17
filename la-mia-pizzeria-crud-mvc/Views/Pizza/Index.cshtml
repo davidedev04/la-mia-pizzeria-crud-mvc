@@ -14,6 +14,12 @@
                 <h5 class="card-text text-center">@pizza.Price €</h5>
                 <a href="@Url.Action("GetPizza", "Pizza", new { id = pizza.Id } )" class="btn btn-warning">DETTAGLI</a>
                 <a href="@Url.Action("Update", "Pizza", new { id = pizza.Id } )" class="btn btn-primary my-2">MODIFICA</a>
+                <form asp-controller="Pizza" asp-action="Delete" asp-route-id="@pizza.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        CANCELLA
+                    </button>
+                </form>
             </div>
         </div>
 
