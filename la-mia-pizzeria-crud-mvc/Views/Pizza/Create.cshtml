@@ -1,7 +1,7 @@
 ﻿﻿@using la_mia_pizzeria_crud_mvc.Data
 @model Pizza
 
-<div class="container">
+<div class="container p-3" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
     <form asp-controller="Pizza" asp-action="Create" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <div class="mb-3">
@@ -24,7 +24,7 @@
             <input asp-for="Image" type="file" class="d-block w-100" />
         </div>
         <div class="text-end">
-            <input type="submit" class="btn btn-small btn-info" value="Crea">
+            <input type="submit" class="btn btn-small btn-info" value="CREA">
         </div>
     </form>
 </div>

@@ -1,19 +1,13 @@
 ﻿﻿@using la_mia_pizzeria_crud_mvc.Data
 @model Pizza
 
-<h1 class="text-center">PIZZA SELEZIONATA: @Model.Name</h1>
-@* <div class="row">
-    <div class="col">@Model.Name</div>
-    <div class="col">@Model.Description</div>
-    <div class="col">@Model.Price.ToString("F2")</div>
-    <div class="col"><a href="@Url.Action("Index", "Pizza")">BACK</a></div>
-</div> *@
 <div class="d-flex justify-content-center align-items-center">
-    <div class="card align-items-center my-3 py-2" style="width: 100vw;">
+    <div class="card align-items-center py-2" style="width: 100vw;">
         <img src="@Model.Image" class="card-img-top" alt="@Model.Name">
         <div class="card-body">
             <h5 class="card-title text-center">@Model.Name</h5>
             <p class="card-text text-center">@Model.Description</p>
+            <h4 class="card-text text-center">@Model.Price €</h4>
         </div>
         <a href="@Url.Action("Index", "Pizza")" class="btn btn-primary">BACK</a>
     </div>
