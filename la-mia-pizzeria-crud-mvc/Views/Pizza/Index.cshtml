@@ -2,7 +2,7 @@
 @model List<Pizza>
 
 <div class="d-flex flex-column justify-content-center align-items-center">
-    <a href="@Url.Action("CreatePizza", "Pizza")" class="btn btn-primary">CREA PIZZA</a>
+    <a href="@Url.Action("Create", "Pizza")" class="btn btn-primary">CREA PIZZA</a>
     @foreach (var pizza in Model)
     {
 

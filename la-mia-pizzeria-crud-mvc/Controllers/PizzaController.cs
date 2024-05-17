@@ -14,11 +14,13 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View(PizzaManager.GetAllPizzas());
         }
 
+        [HttpGet]
         public IActionResult GetPizza(int id)
         {
             var pizza = PizzaManager.GetPizza(id);
@@ -26,6 +28,29 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
                 return View(pizza);
             else
                 return View("errore");
+        }
+
+        [HttpGet]
+        public IActionResult Create() 
+        { 
+            return View(); 
+        }
+
+        [HttpPost]
+        public IActionResult Create(Pizza pizzaC)
+        {
+            if (ModelState.IsValid)
+            {
+                return View(pizzaC);
+            }
+
+            using (var db = new PizzaContext())
+            {
+                db.Add(pizzaC);
+                db.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
