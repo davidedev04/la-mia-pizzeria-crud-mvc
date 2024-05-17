@@ -36,6 +36,54 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
             return View(); 
         }
 
+        [HttpGet]
+        public IActionResult Update(int id)
+        {
+
+            using (PizzaContext context = new PizzaContext())
+            {
+                Pizza pizzaToEdit = context.Pizze.Where(pizza => pizza.Id == id).FirstOrDefault();
+
+                if (pizzaToEdit == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return View(pizzaToEdit);
+                }
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(int id, Pizza pizza)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Update", pizza);
+            }
+
+            using (PizzaContext context = new PizzaContext())
+            {
+                Pizza pizzaToEdit = context.Pizze.Where(pizza =>  pizza.Id == id).FirstOrDefault();
+
+                if(pizzaToEdit != null)
+                {
+                    pizzaToEdit.Name = pizza.Name;
+                    pizzaToEdit.Description = pizza.Description;
+                    pizzaToEdit.Price = pizza.Price;
+
+                    context.SaveChanges();
+
+                    return RedirectToAction("Index");
+                } else
+                {
+                    return NotFound();
+                }
+            }
+        }
+
         [HttpPost]
         public IActionResult Create(Pizza pizzaC)
         {

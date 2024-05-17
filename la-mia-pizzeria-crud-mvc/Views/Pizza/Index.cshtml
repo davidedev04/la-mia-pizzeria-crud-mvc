@@ -11,7 +11,9 @@
             <div class="card-body d-flex flex-column align-items-center">
                 <h5 class="card-title text-center">@pizza.Name</h5>
                 <p class="card-text text-center">@pizza.Description</p>
+                <h5 class="card-text text-center">@pizza.Price €</h5>
                 <a href="@Url.Action("GetPizza", "Pizza", new { id = pizza.Id } )" class="btn btn-warning">DETTAGLI</a>
+                <a href="@Url.Action("Update", "Pizza", new { id = pizza.Id } )" class="btn btn-primary my-2">MODIFICA</a>
             </div>
         </div>
 
