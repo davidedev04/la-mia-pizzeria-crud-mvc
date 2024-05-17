@@ -39,7 +39,7 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         [HttpPost]
         public IActionResult Create(Pizza pizzaC)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(pizzaC);
             }
