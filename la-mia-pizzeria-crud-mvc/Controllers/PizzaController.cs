@@ -73,6 +73,7 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
                     pizzaToEdit.Name = pizza.Name;
                     pizzaToEdit.Description = pizza.Description;
                     pizzaToEdit.Price = pizza.Price;
+                    pizzaToEdit.Image = pizza.Image;
 
                     context.SaveChanges();
 
