@@ -14,6 +14,7 @@
                 <h2 class="card-title text-center">@pizza.Name</h2>
                 <p class="card-text text-center">@pizza.Description</p>
                 <h4 class="card-text text-center">@pizza.Price €</h4>
+                <span class="card-text text-center"></span>
                 <a href="@Url.Action("GetPizza", "Pizza", new { id = pizza.Id } )" style="width: 70%;" class="btn btn-primary">DETTAGLI</a>
                 <a href="@Url.Action("Update", "Pizza", new { id = pizza.Id } )" style="width: 70%;" class="btn btn-warning my-2">MODIFICA</a>
                 <form asp-controller="Pizza" asp-action="Delete" asp-route-id="@pizza.Id" method="post" style="width: 100%" class="d-flex justify-content-center align-items-center">

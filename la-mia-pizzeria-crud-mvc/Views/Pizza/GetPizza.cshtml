@@ -8,6 +8,7 @@
             <h5 class="card-title text-center">@Model.Name</h5>
             <p class="card-text text-center">@Model.Description</p>
             <h4 class="card-text text-center">@Model.Price €</h4>
+            <span class="card-text text-center">@Model.GetDisplayedCategory()</span>
         </div>
         <a href="@Url.Action("Index", "Pizza")" class="btn btn-primary">BACK</a>
     </div>

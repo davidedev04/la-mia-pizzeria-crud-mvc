@@ -1,7 +1,17 @@
-﻿namespace la_mia_pizzeria_crud_mvc.Data
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace la_mia_pizzeria_crud_mvc.Data
 {
+    public enum ResultType
+        {
+            OK,
+            Exception,
+            NotFound
+        }
     public static class PizzaManager
     {
+        
+
         public static int CountAllPizzas()
         {
             using PizzaContext db = new PizzaContext();
@@ -13,10 +23,17 @@
             using PizzaContext db = new PizzaContext();
             return db.Pizze.ToList();
         }
-
-        public static Pizza GetPizza(int id)
+        public static List<Category> GetAllCategories()
         {
             using PizzaContext db = new PizzaContext();
+            return db.Category.ToList();
+        }
+
+        public static Pizza GetPizza(int id, bool includeReferences = true)
+        {
+            using PizzaContext db = new PizzaContext();
+            if (includeReferences)
+                return db.Pizze.Where(x => x.Id == id).Include(p => p.Category).FirstOrDefault();
             return db.Pizze.FirstOrDefault(p => p.Id == id);
         }
 
@@ -25,6 +42,31 @@
             using PizzaContext db = new PizzaContext();
             db.Pizze.Add(pizza);
             db.SaveChanges();
+        }
+
+        public static bool UpdatePizza(int id, Pizza pizza)
+        {
+            try
+            {
+                // Non posso riusare GetPizza()
+                // perché il DbContext deve continuare a vivere
+                // affinché possa accorgersi di quali modifiche deve salvare
+                using PizzaContext db = new PizzaContext();
+                var pizzaDaModificare = db.Pizze.FirstOrDefault(p => p.Id == id);
+                if (pizzaDaModificare == null)
+                    return false;
+                pizzaDaModificare.Name = pizza.Name;
+                pizzaDaModificare.Description = pizza.Description;
+                pizzaDaModificare.Price = pizza.Price;
+                pizzaDaModificare.CategoryId = pizza.CategoryId;
+
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public static void Seed()

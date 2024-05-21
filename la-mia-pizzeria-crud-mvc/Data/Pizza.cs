@@ -16,6 +16,9 @@ namespace la_mia_pizzeria_crud_mvc.Data
         public decimal Price { get; set; }
         public string? Image { get; set; }
 
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
+
         public Pizza() { }
 
         public Pizza(string name, string description, decimal price, string image)
@@ -24,6 +27,21 @@ namespace la_mia_pizzeria_crud_mvc.Data
             this.Description = description;
             this.Price = price;
             this.Image = image;
+        }
+
+        public string GetDisplayedCategory()
+        {
+            if (Category != null)
+            {
+                return Category.Type;
+                
+            }
+            else
+            {
+                return "Nessuna categoria";
+            }
+
+            
         }
     }
 }
