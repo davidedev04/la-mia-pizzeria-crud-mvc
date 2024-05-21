@@ -2,6 +2,7 @@
 using la_mia_pizzeria_crud_mvc.Data;
 using la_mia_pizzeria_crud_mvc.Models;
 using System.Diagnostics;
+using Microsoft.Extensions.Hosting;
 
 namespace la_mia_pizzeria_crud_mvc.Controllers
 {
@@ -31,24 +32,48 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create() 
-        { 
-            Pizza p = new Pizza();
-            List<Category> categories = PizzaManager.GetAllCategories();
-            PizzaFormModel model = new PizzaFormModel(p, categories);
-            return View(model); 
+        public IActionResult Create()
+        {
+            PizzaFormModel model = new PizzaFormModel();
+            model.Pizza = new Pizza();
+            model.Categories = PizzaManager.GetAllCategories();
+            model.CreateIngredients();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(PizzaFormModel pizzaC)
+        {
+            if (ModelState.IsValid == false)
+            {
+                // Ritorno la form di prima con i dati della pizza
+                // precompilati dall'utente
+                pizzaC.Categories = PizzaManager.GetAllCategories();
+                pizzaC.CreateIngredients();
+                return View("Create", pizzaC);
+            }
+
+            PizzaManager.InsertPizza(pizzaC.Pizza, pizzaC.SelectedIngredients);
+            // Richiamiamo la action Index affinché vengano mostrate tutte le pizze
+            // inclusa quella nuova
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
         public IActionResult Update(int id)
         {
 
-            using (PizzaContext context = new PizzaContext())
+            var pizzaToEdit = PizzaManager.GetPizza(id);
+
+            if (pizzaToEdit == null)
             {
-                var pizza = PizzaManager.GetPizza(id);
-                if (pizza == null)
-                    return NotFound();
-                PizzaFormModel model = new PizzaFormModel(pizza, PizzaManager.GetAllCategories());
+                return NotFound();
+            }
+            else
+            {
+                PizzaFormModel model = new PizzaFormModel(pizzaToEdit, PizzaManager.GetAllCategories());
+                model.CreateIngredients();
                 return View(model);
             }
         }
@@ -62,17 +87,28 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
                 // Ritorno la form di prima con i dati della pizza
                 // precompilati dall'utente
                 model.Categories = PizzaManager.GetAllCategories();
+                model.CreateIngredients();
                 return View("Update", model);
             }
 
-            var modified = PizzaManager.UpdatePizza(id, model.Pizza);
-            if (modified)
+            if (PizzaManager.UpdatePizza(id, model.Pizza.Name, model.Pizza.Description, model.Pizza.CategoryId, model.SelectedIngredients))
             {
-                // Richiamiamo la action Index affinché vengano mostrate tutte le pizze
                 return RedirectToAction("Index");
             }
             else
+            {
                 return NotFound();
+            }
+
+
+
+            bool result = PizzaManager.UpdatePizza(id, pizzaToEdit =>
+            {
+                pizzaToEdit.Name = model.Pizza.Name;
+                pizzaToEdit.Description = model.Pizza.Description;
+                pizzaToEdit.CategoryId = model.Pizza.CategoryId;
+                pizzaToEdit.Ingredients.Clear();
+            });
         }
 
         [HttpPost]
@@ -90,30 +126,15 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
                     context.SaveChanges();
 
                     return RedirectToAction("Index");
-                } else
+                }
+                else
                 {
                     return NotFound();
                 }
             }
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(PizzaFormModel pizzaC)
-        {
-            if (ModelState.IsValid == false)
-            {
-                // Ritorno la form di prima con i dati della pizza
-                // precompilati dall'utente
-                pizzaC.Categories = PizzaManager.GetAllCategories();
-                return View("CreatePizza", pizzaC);
-            }
 
-            PizzaManager.InsertPizza(pizzaC.Pizza);
-            // Richiamiamo la action Index affinché vengano mostrate tutte le pizze
-            // inclusa quella nuova
-            return RedirectToAction("Index");
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

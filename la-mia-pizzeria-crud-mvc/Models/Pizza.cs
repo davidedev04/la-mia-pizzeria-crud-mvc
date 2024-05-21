@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace la_mia_pizzeria_crud_mvc.Data
+namespace la_mia_pizzeria_crud_mvc.Models
 {
     public class Pizza
     {
@@ -18,15 +18,16 @@ namespace la_mia_pizzeria_crud_mvc.Data
 
         public int? CategoryId { get; set; }
         public Category? Category { get; set; }
+        public List<Ingredients> Ingredients { get; set; }
 
         public Pizza() { }
 
         public Pizza(string name, string description, decimal price, string image)
         {
-            this.Name = name;
-            this.Description = description;
-            this.Price = price;
-            this.Image = image;
+            Name = name;
+            Description = description;
+            Price = price;
+            Image = image;
         }
 
         public string GetDisplayedCategory()
@@ -34,14 +35,14 @@ namespace la_mia_pizzeria_crud_mvc.Data
             if (Category != null)
             {
                 return Category.Type;
-                
+
             }
             else
             {
                 return "Nessuna categoria";
             }
 
-            
+
         }
     }
 }
