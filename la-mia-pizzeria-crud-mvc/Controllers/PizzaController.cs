@@ -84,7 +84,7 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
                 // precompilati dall'utente
                 model.Categories = PizzaManager.GetAllCategories();
                 model.CreateIngredients();
-                return View("UpdatePizza", model);
+                return View("Update", model);
             }
 
             var modified = PizzaManager.UpdatePizza(id, model.Pizza, model.SelectedIngredients);

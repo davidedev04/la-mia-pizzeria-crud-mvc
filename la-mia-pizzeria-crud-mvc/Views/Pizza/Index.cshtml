@@ -1,7 +1,9 @@
 ﻿@using la_mia_pizzeria_crud_mvc.Data
 @model List<Pizza>
 
-<a href="@Url.Action("Create", "Pizza")" class="btn btn-primary">CREA PIZZA</a>
+@if (User.IsInRole("ADMIN"))
+{
+    <a href="@Url.Action("Create", "Pizza")" class="btn btn-primary">CREA PIZZA</a>
 
 <div class="d-flex justify-content-center align-items-center flex-wrap">
     
@@ -28,3 +30,4 @@
 
     }
 </div>
+}
