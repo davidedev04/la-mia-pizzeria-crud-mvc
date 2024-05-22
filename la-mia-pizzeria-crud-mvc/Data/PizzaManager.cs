@@ -6,14 +6,14 @@ using la_mia_pizzeria_crud_mvc.Models;
 namespace la_mia_pizzeria_crud_mvc.Data
 {
     public enum ResultType
-        {
-            OK,
-            Exception,
-            NotFound
-        }
+    {
+        OK,
+        Exception,
+        NotFound
+    }
     public static class PizzaManager
     {
-        
+
 
         public static int CountAllPizzas()
         {
@@ -47,69 +47,71 @@ namespace la_mia_pizzeria_crud_mvc.Data
         {
             using PizzaContext db = new PizzaContext();
             if (includeReferences)
-                return db.Pizze.Where(x => x.Id == id).Include(p => p.Category).FirstOrDefault();
+                return db.Pizze.Where(x => x.Id == id).Include(p => p.Category).Include(p => p.Ingredients).FirstOrDefault();
             return db.Pizze.FirstOrDefault(p => p.Id == id);
         }
 
         public static void InsertPizza(Pizza pizza, List<string> SelectedIngredients = null)
         {
             using PizzaContext db = new PizzaContext();
+            pizza.Ingredients = new List<Ingredients>();
             if (SelectedIngredients != null)
             {
-                pizza.Ingredients = new List<Ingredients>();
-                // Trasformiamo gli ID scelti in tag da aggiungere tra i riferimenti in Post
-                foreach (var ingredientsId in SelectedIngredients)
+                // Trasformiamo gli ID scelti in ingredienti da aggiungere tra i riferimenti in Pizza
+                foreach (var ingredient in SelectedIngredients)
                 {
-                    int id = int.Parse(ingredientsId);
-                    var ing = db.ingredients.FirstOrDefault(t => t.Id == id); // PostManager.GetTagById(id); NON usiamo GetTagById() perché usa un db context diverso e ciò causerebbe errore in fase di salvataggio - usiamo lo stesso context all'interno della stessa operazione
-                    pizza.Ingredients.Add(ing);
+                    int id = int.Parse(ingredient);
+                    // NON usiamo un GetIngredientById() perché userebbe un db context diverso
+                    // e ciò causerebbe errore in fase di salvataggio - usiamo lo stesso context all'interno della stessa operazione
+                    var ingredientFromDb = db.ingredients.FirstOrDefault(x => x.Id == id);
+                    if (ingredientFromDb != null)
+                    {
+                        pizza.Ingredients.Add(ingredientFromDb);
+                    }
                 }
             }
+
             db.Pizze.Add(pizza);
             db.SaveChanges();
+
         }
 
-        public static bool UpdatePizza(int id, Action<Pizza> edit)
+        public static bool UpdatePizza(int id, Pizza pizza, List<string> SelectedIngredients)
         {
-            using PizzaContext db = new PizzaContext();
-            var pizza = db.Pizze.FirstOrDefault(p => p.Id == id);
-
-            if (pizza == null)
-                return false;
-
-            edit(pizza);
-
-            db.SaveChanges();
-
-            return true;
-        }
-
-        public static bool UpdatePizza(int id, string name, string description, int? categoryId, List<string> ingredients)
-        {
-            using PizzaContext db = new PizzaContext();
-            var pizza = db.Pizze.Where(x => x.Id == id).Include(x => x.Ingredients).FirstOrDefault();
-
-            if (pizza == null)
-                return false;
-
-            pizza.Name = name;
-            pizza.Description = description;
-            pizza.CategoryId = categoryId;
-
-            pizza.Ingredients.Clear(); // Prima svuoto così da salvare solo le informazioni che l'utente ha scelto, NON le aggiungiamo ai vecchi dati
-            if (ingredients != null)
+            try
             {
-                foreach (var tag in ingredients)
+                // Non posso riusare GetPizza()
+                // perché il DbContext deve continuare a vivere
+                // affinché possa accorgersi di quali modifiche deve salvare
+                using PizzaContext db = new PizzaContext();
+                var pizzaDaModificare = db.Pizze.Where(p => p.Id == id).Include(p => p.Ingredients).FirstOrDefault();
+                if (pizzaDaModificare == null)
+                    return false;
+                pizzaDaModificare.Name = pizza.Name;
+                pizzaDaModificare.Description = pizza.Description;
+                pizzaDaModificare.Price = pizza.Price;
+                pizzaDaModificare.CategoryId = pizza.CategoryId;
+
+                // Prima svuoto così da salvare solo le informazioni che l'utente ha scelto, NON le aggiungiamo ai vecchi dati
+                pizzaDaModificare.Ingredients.Clear();
+                if (SelectedIngredients != null)
                 {
-                    int ingredientId = int.Parse(tag);
-                    var ingredientFromDb = db.ingredients.FirstOrDefault(x => x.Id == ingredientId);
-                    pizza.Ingredients.Add(ingredientFromDb);
+                    foreach (var ingredient in SelectedIngredients)
+                    {
+                        int ingredientId = int.Parse(ingredient);
+                        var ingredientFromDb = db.ingredients.FirstOrDefault(x => x.Id == ingredientId);
+                        if (ingredientFromDb != null)
+                            pizzaDaModificare.Ingredients.Add(ingredientFromDb);
+                    }
                 }
+
+                db.SaveChanges();
+                return true;
             }
-
-            db.SaveChanges();
-
-            return true;
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public static void Seed()

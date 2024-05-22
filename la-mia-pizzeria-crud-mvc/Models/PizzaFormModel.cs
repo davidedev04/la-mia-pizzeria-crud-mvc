@@ -23,18 +23,18 @@ namespace la_mia_pizzeria_crud_mvc.Models
         {
             ingredients = new List<SelectListItem>();
             SelectedIngredients = new List<string>();
-            var tagsFromDB = PizzaManager.GetAllIngredients();
-            foreach (var tag in tagsFromDB) // es. tag1, tag2, tag3... tag10
+            var ingredientsFromDB = PizzaManager.GetAllIngredients();
+            foreach (var ingrediente in ingredientsFromDB) 
             {
-                bool isSelected = Pizza.Ingredients?.Any(t => t.Id == tag.Id) == true;
+                bool isSelected = Pizza.Ingredients?.Any(i => i.Id == ingrediente.Id) == true;
                 ingredients.Add(new SelectListItem() // lista degli elementi selezionabili
                 {
-                    Text = tag.IngName, // Testo visualizzato
-                    Value = tag.Id.ToString(), // SelectListItem vuole una generica stringa, non un int
+                    Text = ingrediente.IngName, // Testo visualizzato
+                    Value = ingrediente.Id.ToString(), // SelectListItem vuole una generica stringa, non un int
                     Selected = isSelected // es. tag1, tag5, tag9
                 });
                 if (isSelected)
-                    SelectedIngredients.Add(tag.Id.ToString()); // lista degli elementi selezionati
+                    SelectedIngredients.Add(ingrediente.Id.ToString()); // lista degli elementi selezionati
             }
         }
     }

@@ -3,9 +3,11 @@ using la_mia_pizzeria_crud_mvc.Data;
 using la_mia_pizzeria_crud_mvc.Models;
 using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 namespace la_mia_pizzeria_crud_mvc.Controllers
 {
+    [Authorize(Roles = "ADMIN,USER")]
     public class PizzaController : Controller
     {
         private readonly ILogger<PizzaController> _logger;
@@ -34,9 +36,9 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            PizzaFormModel model = new PizzaFormModel();
-            model.Pizza = new Pizza();
-            model.Categories = PizzaManager.GetAllCategories();
+            Pizza p = new Pizza();
+            List<Category> categories = PizzaManager.GetAllCategories();
+            PizzaFormModel model = new PizzaFormModel(p, categories);
             model.CreateIngredients();
             return View(model);
         }
@@ -64,18 +66,12 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         public IActionResult Update(int id)
         {
 
-            var pizzaToEdit = PizzaManager.GetPizza(id);
-
-            if (pizzaToEdit == null)
-            {
+            var pizza = PizzaManager.GetPizza(id);
+            if (pizza == null)
                 return NotFound();
-            }
-            else
-            {
-                PizzaFormModel model = new PizzaFormModel(pizzaToEdit, PizzaManager.GetAllCategories());
-                model.CreateIngredients();
-                return View(model);
-            }
+            PizzaFormModel model = new PizzaFormModel(pizza, PizzaManager.GetAllCategories());
+            model.CreateIngredients();
+            return View(model);
         }
 
         [HttpPost]
@@ -88,27 +84,17 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
                 // precompilati dall'utente
                 model.Categories = PizzaManager.GetAllCategories();
                 model.CreateIngredients();
-                return View("Update", model);
+                return View("UpdatePizza", model);
             }
 
-            if (PizzaManager.UpdatePizza(id, model.Pizza.Name, model.Pizza.Description, model.Pizza.CategoryId, model.SelectedIngredients))
+            var modified = PizzaManager.UpdatePizza(id, model.Pizza, model.SelectedIngredients);
+            if (modified)
             {
+                // Richiamiamo la action Index affinché vengano mostrate tutte le pizze
                 return RedirectToAction("Index");
             }
             else
-            {
                 return NotFound();
-            }
-
-
-
-            bool result = PizzaManager.UpdatePizza(id, pizzaToEdit =>
-            {
-                pizzaToEdit.Name = model.Pizza.Name;
-                pizzaToEdit.Description = model.Pizza.Description;
-                pizzaToEdit.CategoryId = model.Pizza.CategoryId;
-                pizzaToEdit.Ingredients.Clear();
-            });
         }
 
         [HttpPost]

@@ -18,7 +18,7 @@ namespace la_mia_pizzeria_crud_mvc.Models
 
         public int? CategoryId { get; set; }
         public Category? Category { get; set; }
-        public List<Ingredients> Ingredients { get; set; }
+        public List<Ingredients>? Ingredients { get; set; }
 
         public Pizza() { }
 
@@ -41,8 +41,6 @@ namespace la_mia_pizzeria_crud_mvc.Models
             {
                 return "Nessuna categoria";
             }
-
-
         }
     }
 }

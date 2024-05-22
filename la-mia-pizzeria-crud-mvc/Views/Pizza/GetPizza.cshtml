@@ -9,6 +9,18 @@
             <p class="card-text text-center">@Model.Description</p>
             <h4 class="card-text text-center">@Model.Price €</h4>
             <span class="card-text text-center">@Model.GetDisplayedCategory()</span>
+            <div class="card-text text-center">
+                Ingredienti:
+                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                    @foreach (var ingrediente in Model.Ingredients)
+                    {
+                        <div style="background-color: #AAAAAA; display: flex; justify-content: center; align-items: center;
+                            border-radius: 3px; border-style: solid; border-color: #AAAAAA; padding: 2px;">
+                            @ingrediente.IngName
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
         <a href="@Url.Action("Index", "Pizza")" class="btn btn-primary">BACK</a>
     </div>
