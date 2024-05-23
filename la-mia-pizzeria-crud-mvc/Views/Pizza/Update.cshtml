@@ -1,7 +1,9 @@
 ﻿﻿@using la_mia_pizzeria_crud_mvc.Data
 @model PizzaFormModel
 
-<div class="container p-3" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
+@if (User.IsInRole("ADMIN"))
+{
+    <div class="container p-3" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
     <form asp-controller="Pizza" asp-action="Update" asp-route-id="Model.Pizza.Id" method="post">
         @Html.AntiForgeryToken()
         <div class="mb-3">
@@ -55,3 +57,5 @@
         </div>
     </form>
 </div>
+}
+
